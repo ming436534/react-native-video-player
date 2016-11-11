@@ -122,11 +122,24 @@ export default class VideoPlayer extends Component {
     }
   }
 
+  forceLoad() {
+    setTimeout(() => {
+      this.setState({
+        isPlaying: this.props.autoplay,
+        isStarted: this.props.autoplay,
+      });
+    }, 100)
+  }
+
   onLoad(event) {
     const { duration } = event;
     const { videoWidth } = this.props;
     const ratio = event.naturalSize.height/event.naturalSize.width;
-    this.setState({ duration, ratio});
+    if (this.props.onLoad != null) this.props.onLoad(ratio);
+    const isPlaying = true;
+    const isStarted = true;
+    this.setState({ duration, ratio, isPlaying, isStarted });
+    this.forceLoad();
   }
 
   onPlayPress() {
@@ -327,6 +340,7 @@ VideoPlayer.propTypes = {
   resizeMode: Video.propTypes.resizeMode,
   hideControlsOnStart: PropTypes.bool,
   endWithThumbnail: PropTypes.bool,
+  onLoad: PropTypes.func,
   customStyles: PropTypes.shape({
     wrapper: View.propTypes.style,
     video: Video.propTypes.style,
