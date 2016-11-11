@@ -272,7 +272,7 @@ export default class VideoPlayer extends Component {
     if (!isStarted && thumbnail) {
       return this.getThumbnail();
     } else if (!isStarted) {
-      return <View style={[styles.preloadingPlaceholder, this.getSizeStyles(), style]} />;
+      // return <View style={[styles.preloadingPlaceholder, this.getSizeStyles(), style]} />;
     }
     return this.getVideo();
   }
