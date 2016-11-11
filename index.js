@@ -66,7 +66,9 @@ export default class VideoPlayer extends Component {
       progress: 0,
       isMuted: props.defaultMuted,
       isControlsVisible: !props.hideControlsOnStart,
+      onLoadVideoRatio: 0,
       duration: 0,
+      ratio: 0,
     };
 
     this.onLayout = this.onLayout.bind(this);
@@ -122,7 +124,9 @@ export default class VideoPlayer extends Component {
 
   onLoad(event) {
     const { duration } = event;
-    this.setState({ duration });
+    const { videoWidth } = this.props;
+    const ratio = event.naturalSize.height/event.naturalSize.width;
+    this.setState({ duration, ratio});
   }
 
   onPlayPress() {
@@ -142,7 +146,7 @@ export default class VideoPlayer extends Component {
   getSizeStyles() {
     const { videoWidth, videoHeight } = this.props;
     const { width } = this.state;
-    const ratio = videoHeight / videoWidth;
+    const ratio = (this.props.adaptiveHeight) ? this.state.ratio : videoHeight / videoWidth;
     return {
       height: width * ratio,
       width,
@@ -294,6 +298,10 @@ export default class VideoPlayer extends Component {
     this.hideControls();
   }
 
+  componentDidUpdate(props, states) {
+    console.log(states);
+  }
+
   render() {
     return (
       <View onLayout={this.onLayout} style={this.props.customStyles.wrapper}>
@@ -315,6 +323,7 @@ VideoPlayer.propTypes = {
   style: View.propTypes.style,
   controlsTimeout: PropTypes.number,
   loop: PropTypes.bool,
+  adaptiveHeight: PropTypes.bool,
   resizeMode: Video.propTypes.resizeMode,
   hideControlsOnStart: PropTypes.bool,
   endWithThumbnail: PropTypes.bool,
