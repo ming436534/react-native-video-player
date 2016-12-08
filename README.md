@@ -12,6 +12,7 @@ react-native-video for the video playback.
 npm install --save react-native-video-player
 react-native link react-native-video
 react-native link react-native-vector-icons
+react-native link react-native-material-kit
 ```
 
 ## Props
