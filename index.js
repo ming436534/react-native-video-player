@@ -2,6 +2,9 @@ import React, { Component, PropTypes } from 'react';
 import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Video from 'react-native-video'; // eslint-disable-line
+import {
+  MKSlider
+} from 'react-native-material-kit'
 
 const styles = StyleSheet.create({
   preloadingPlaceholder: {
@@ -40,12 +43,6 @@ const styles = StyleSheet.create({
   extraControl: {
     color: 'white',
     padding: 8,
-  },
-  seekBar: {
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
-    height: 3,
-    flex: 1,
-    flexDirection: 'row',
   },
   seekBarProgress: {
     backgroundColor: '#F00',
@@ -189,27 +186,28 @@ export default class VideoPlayer extends Component {
     );
   }
 
-  getSeekBar(fullWidth) {
+  getSeekBar(style) {
     const { customStyles } = this.props;
     return (
-      <View
+      <MKSlider
         style={[
-          styles.seekBar, {
-            marginHorizontal: fullWidth ? 0 : 10,
-            marginTop: fullWidth ? -3 : 0,
-          },
+          style,
           customStyles.seekBar,
         ]}
-      >
-        <View
-          style={[
-            { flex: this.state.progress },
-            styles.seekBarProgress,
-            customStyles.seekBarProgress,
-          ]}
-        />
-        <View style={{ flex: 1 - this.state.progress }} />
-      </View>
+        lowerTrackColor="red"
+        thumbRadius={!this.state.isPlaying || this.state.isControlsVisible ? 5 : -1}
+        step={1}
+        max={100}
+        onChange={(val) => {
+          this.player.seek(val/100*this.state.duration)
+          this.setState({
+            isPlaying: false,
+            progress: val/100,
+          });
+        }}
+        onConfirm={() => this.player.seek(this.state.progress*this.state.duration)}
+        value={this.state.progress*100}
+      />
     );
   }
 
@@ -227,7 +225,7 @@ export default class VideoPlayer extends Component {
             size={32}
           />
         </TouchableOpacity>
-        {this.getSeekBar()}
+        {this.getSeekBar({width:this.state.width - 32 - 24 - 32})}
         {this.props.muted ? null : (
           <TouchableOpacity onPress={this.onMutePress} style={customStyles.controlButton}>
             <Icon
@@ -277,7 +275,7 @@ export default class VideoPlayer extends Component {
           <TouchableOpacity style={styles.overlayButton} onPress={this.showControls} />
         </View>
         {((!this.state.isPlaying) || this.state.isControlsVisible)
-          ? this.getControls() : this.getSeekBar(true)}
+          ? this.getControls() : this.getSeekBar({width: this.state.width + 28, position: 'absolute', bottom: -5, left: -14})}
       </View>
     );
   }
