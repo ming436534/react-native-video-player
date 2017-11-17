@@ -280,10 +280,6 @@ export default class VideoPlayer extends Component {
   }
 
   hideControls() {
-    if (this.props.onHideControls) {
-      this.props.onHideControls();
-    }
-
     if (this.props.disableControlsAutoHide) {
       return;
     }
@@ -294,6 +290,9 @@ export default class VideoPlayer extends Component {
     }
     this.controlsTimeout = setTimeout(() => {
       this.setState({ isControlsVisible: false });
+      if (this.props.onHideControls) {
+        this.props.onHideControls();
+      }
     }, this.props.controlsTimeout);
   }
 
